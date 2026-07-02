@@ -1,6 +1,8 @@
 import {
+  CreditCard,
   Heart,
   Home,
+  LockKeyhole,
   PackageCheck,
   Search,
   ShieldCheck,
@@ -14,9 +16,11 @@ import {
   Zap
 } from "lucide-react";
 
-const icons = {
+const icons: Record<string, React.ComponentType<{ className?: string }>> = {
+  CreditCard,
   Heart,
   Home,
+  LockKeyhole,
   PackageCheck,
   Search,
   ShieldCheck,

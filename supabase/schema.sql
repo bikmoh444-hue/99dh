@@ -147,6 +147,16 @@ create table if not exists public.newsletter_subscribers (
   subscribed_at timestamptz default now()
 );
 
+-- Contact messages
+create table if not exists public.contact_messages (
+  id uuid primary key default uuid_generate_v4(),
+  full_name text not null,
+  email text not null,
+  message text not null,
+  is_read boolean not null default false,
+  created_at timestamptz default now()
+);
+
 -- Admin users, auth only for admin
 create table if not exists public.admin_users (
   id uuid primary key default uuid_generate_v4(),
@@ -169,6 +179,19 @@ create table if not exists public.site_settings (
   show_testimonials boolean not null default true,
   constraint single_row check (id = 1)
 );
+
+-- Hero & Features columns for site_settings
+alter table public.site_settings add column if not exists hero_badge_text text default 'Exclusivité Maroc';
+alter table public.site_settings add column if not exists hero_title text default 'Tout à 99 DH';
+alter table public.site_settings add column if not exists hero_subtitle text default '';
+alter table public.site_settings add column if not exists hero_description text default 'Des produits utiles, tendance et sélectionnés pour le quotidien marocain. Prix unique, livraison rapide, paiement à la livraison.';
+alter table public.site_settings add column if not exists hero_image_url text default '';
+alter table public.site_settings add column if not exists hero_cta_primary_text text default 'Acheter maintenant';
+alter table public.site_settings add column if not exists hero_cta_primary_link text default '#deals';
+alter table public.site_settings add column if not exists hero_cta_secondary_text text default 'Voir le catalogue';
+alter table public.site_settings add column if not exists hero_cta_secondary_link text default '#categories';
+alter table public.site_settings add column if not exists logo_url text default '';
+alter table public.site_settings add column if not exists features jsonb default '[{"icon":"Truck","title":"Livraison rapide","subtitle":"24/48h partout"},{"icon":"CreditCard","title":"Paiement à la livraison","subtitle":"Sécurité totale"},{"icon":"PackageCheck","title":"Produits sélectionnés","subtitle":"Qualité premium"},{"icon":"LockKeyhole","title":"Achat sécurisé","subtitle":"Données protégées"}]';
 
 insert into public.site_settings (id) values (1)
 on conflict (id) do nothing;
@@ -203,6 +226,7 @@ alter table public.testimonials enable row level security;
 alter table public.newsletter_subscribers enable row level security;
 alter table public.admin_users enable row level security;
 alter table public.site_settings enable row level security;
+alter table public.contact_messages enable row level security;
 
 -- Public read policies
 drop policy if exists "Public read categories" on public.categories;
@@ -235,6 +259,9 @@ create policy "Public insert order_items" on public.order_items for insert with 
 
 drop policy if exists "Public newsletter insert" on public.newsletter_subscribers;
 create policy "Public newsletter insert" on public.newsletter_subscribers for insert with check (true);
+
+drop policy if exists "Public insert contact_messages" on public.contact_messages;
+create policy "Public insert contact_messages" on public.contact_messages for insert with check (true);
 
 -- Admin policies
 drop policy if exists "Admin read admin users" on public.admin_users;
@@ -286,6 +313,15 @@ create policy "Admin manage site_settings" on public.site_settings for all
   using (exists (select 1 from public.admin_users where user_id = auth.uid()))
   with check (exists (select 1 from public.admin_users where user_id = auth.uid()));
 
+drop policy if exists "Admin read contact_messages" on public.contact_messages;
+create policy "Admin read contact_messages" on public.contact_messages for select
+  using (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
+drop policy if exists "Admin update contact_messages" on public.contact_messages;
+create policy "Admin update contact_messages" on public.contact_messages for update
+  using (exists (select 1 from public.admin_users where user_id = auth.uid()))
+  with check (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
 -- Realtime orders, idempotent
 do $$
 begin
@@ -301,33 +337,33 @@ end $$;
 
 -- Storage bucket
 insert into storage.buckets (id, name, public)
-values ('product-images', 'product-images', true)
+values ('images', 'images', true)
 on conflict (id) do nothing;
 
-drop policy if exists "Public read product-images bucket" on storage.objects;
-create policy "Public read product-images bucket"
-  on storage.objects for select using (bucket_id = 'product-images');
+drop policy if exists "Public read images bucket" on storage.objects;
+create policy "Public read images bucket"
+  on storage.objects for select using (bucket_id = 'images');
 
-drop policy if exists "Admin upload product-images" on storage.objects;
-create policy "Admin upload product-images"
+drop policy if exists "Admin upload images" on storage.objects;
+create policy "Admin upload images"
   on storage.objects for insert
   with check (
-    bucket_id = 'product-images'
+    bucket_id = 'images'
     and exists (select 1 from public.admin_users where user_id = auth.uid())
   );
 
-drop policy if exists "Admin delete product-images" on storage.objects;
-create policy "Admin delete product-images"
+drop policy if exists "Admin delete images" on storage.objects;
+create policy "Admin delete images"
   on storage.objects for delete
   using (
-    bucket_id = 'product-images'
+    bucket_id = 'images'
     and exists (select 1 from public.admin_users where user_id = auth.uid())
   );
 
-drop policy if exists "Admin update product-images" on storage.objects;
-create policy "Admin update product-images"
+drop policy if exists "Admin update images" on storage.objects;
+create policy "Admin update images"
   on storage.objects for update
   using (
-    bucket_id = 'product-images'
+    bucket_id = 'images'
     and exists (select 1 from public.admin_users where user_id = auth.uid())
   );

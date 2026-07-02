@@ -26,6 +26,12 @@ export type Product = {
   created_at?: string;
 };
 
+export type FeatureItem = {
+  icon: string;
+  title: string;
+  subtitle: string;
+};
+
 export type SiteSettings = {
   id: number;
   shipping_fee: number;
@@ -36,6 +42,17 @@ export type SiteSettings = {
   facebook_url: string;
   whatsapp_message: string;
   show_testimonials: boolean;
+  hero_badge_text: string;
+  hero_title: string;
+  hero_subtitle: string;
+  hero_description: string;
+  hero_image_url: string;
+  hero_cta_primary_text: string;
+  hero_cta_primary_link: string;
+  hero_cta_secondary_text: string;
+  hero_cta_secondary_link: string;
+  logo_url: string;
+  features: FeatureItem[];
 };
 
 export type Testimonial = {
@@ -79,6 +96,15 @@ export type OrderItem = {
   quantity: number;
   unit_price: number;
   subtotal: number;
+};
+
+export type ContactMessage = {
+  id: string;
+  full_name: string;
+  email: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
 };
 
 export type Order = CustomerForm & {

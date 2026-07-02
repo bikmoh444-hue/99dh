@@ -1,6 +1,13 @@
 import { categories as fallbackCategories, products as fallbackProducts, testimonials as fallbackTestimonials } from "@/lib/mock-data";
 import { createServerSupabase } from "@/lib/supabase";
-import type { Category, Product, ProductReview, SiteSettings, Testimonial } from "@/lib/types";
+import type { Category, FeatureItem, Product, ProductReview, SiteSettings, Testimonial } from "@/lib/types";
+
+const defaultFeatures = [
+  { icon: "Truck", title: "Livraison rapide", subtitle: "24/48h partout" },
+  { icon: "CreditCard", title: "Paiement à la livraison", subtitle: "Sécurité totale" },
+  { icon: "PackageCheck", title: "Produits sélectionnés", subtitle: "Qualité premium" },
+  { icon: "LockKeyhole", title: "Achat sécurisé", subtitle: "Données protégées" }
+];
 
 export const fallbackSiteSettings: SiteSettings = {
   id: 1,
@@ -11,7 +18,18 @@ export const fallbackSiteSettings: SiteSettings = {
   instagram_url: "",
   facebook_url: "",
   whatsapp_message: "",
-  show_testimonials: true
+  show_testimonials: true,
+  hero_badge_text: "Exclusivité Maroc",
+  hero_title: "Tout à 99 DH",
+  hero_subtitle: "",
+  hero_description: "Des produits utiles, tendance et sélectionnés pour le quotidien marocain. Prix unique, livraison rapide, paiement à la livraison.",
+  hero_image_url: "",
+  hero_cta_primary_text: "Acheter maintenant",
+  hero_cta_primary_link: "#deals",
+  hero_cta_secondary_text: "Voir le catalogue",
+  hero_cta_secondary_link: "#categories",
+  logo_url: "",
+  features: defaultFeatures
 };
 
 function normalizeProduct(item: any): Product {
@@ -43,7 +61,13 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   const supabase = createServerSupabase();
   if (!supabase) return fallbackSiteSettings;
   const { data } = await supabase.from("site_settings").select("*").eq("id", 1).maybeSingle();
-  return data ? { ...fallbackSiteSettings, ...data, shipping_fee: Number(data.shipping_fee ?? 0) } : fallbackSiteSettings;
+  if (!data) return fallbackSiteSettings;
+  return {
+    ...fallbackSiteSettings,
+    ...data,
+    shipping_fee: Number(data.shipping_fee ?? 0),
+    features: Array.isArray(data.features) ? data.features as FeatureItem[] : defaultFeatures
+  };
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {

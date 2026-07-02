@@ -19,6 +19,7 @@ export default function AdminDashboardPage() {
   const [selected, setSelected] = useState<Order | null>(demoOrders[0]);
   const [newOrderAlert, setNewOrderAlert] = useState(false);
   const [adminNote, setAdminNote] = useState(demoOrders[0]?.admin_note ?? "");
+  const [unreadContact, setUnreadContact] = useState(0);
 
   useEffect(() => {
     fetch("/api/orders")
@@ -43,6 +44,12 @@ export default function AdminDashboardPage() {
     return () => {
       supabase.removeChannel(channel);
     };
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/contact").then((res) => res.json()).then((data) => {
+      if (data.messages) setUnreadContact(data.messages.filter((m: any) => !m.is_read).length);
+    });
   }, []);
 
   const filtered = useMemo(() => {
@@ -106,6 +113,11 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             {newOrderAlert ? <span className="rounded-full bg-gold px-3 py-2 text-sm font-black text-ink"><Bell size={15} className="inline" /> Nouvelle commande</span> : null}
+            <Link href="/admin/categories" className="rounded-lg border border-ink px-4 py-3 font-bold">Catégories</Link>
+            <Link href="/admin/contact" className="relative rounded-lg border border-ink px-4 py-3 font-bold">
+              Contact
+              {unreadContact > 0 ? <span className="absolute -right-2 -top-2 grid h-5 min-w-5 place-items-center rounded-full bg-red-500 px-1 text-xs font-black text-white">{unreadContact}</span> : null}
+            </Link>
             <Link href="/admin/settings" className="rounded-lg border border-ink px-4 py-3 font-bold">Paramètres</Link>
             <Link href="/admin/testimonials" className="rounded-lg border border-ink px-4 py-3 font-bold">Témoignages</Link>
             <Link href="/admin/products" className="rounded-lg bg-ink px-4 py-3 font-bold text-white">Produits</Link>

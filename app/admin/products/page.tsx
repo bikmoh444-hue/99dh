@@ -27,9 +27,9 @@ export default function AdminProductsPage() {
     const uploaded: string[] = [];
     for (const file of Array.from(files)) {
       const path = `${crypto.randomUUID()}-${file.name}`;
-      const { error } = await supabase.storage.from("product-images").upload(path, file);
+      const { error } = await supabase.storage.from("images").upload(path, file);
       if (!error) {
-        const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+        const { data } = supabase.storage.from("images").getPublicUrl(path);
         uploaded.push(data.publicUrl);
       }
     }
