@@ -40,8 +40,8 @@ export function SiteHeader() {
           </div>
           <nav className="hidden items-center gap-8 text-sm font-bold lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:flex">
             <Link href="/">Home</Link>
-            <Link href="#categories">Categories</Link>
-            <Link href="#deals">Deals</Link>
+            <Link href="/#categories">Categories</Link>
+            <Link href="/#deals">Deals</Link>
             <Link href="/contact">Contact</Link>
           </nav>
           <div className="flex items-center gap-2">

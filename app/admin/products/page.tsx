@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowUp, ImagePlus, Plus, Trash2 } from "lucide-react";
-import { categories, products as demoProducts } from "@/lib/mock-data";
-import type { Product } from "@/lib/types";
+import { categories as demoCategories, products as demoProducts } from "@/lib/mock-data";
+import type { Category, Product } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import { createBrowserSupabase } from "@/lib/supabase";
 
@@ -15,10 +15,16 @@ export default function AdminProductsPage() {
   const [manualUrl, setManualUrl] = useState("");
   const [specs, setSpecs] = useState<Array<{ label: string; value: string }>>([]);
   const [editing, setEditing] = useState<Product | null>(null);
+  const [categoryOptions, setCategoryOptions] = useState<Category[]>(demoCategories);
 
   useEffect(() => {
     fetch("/api/products").then((res) => res.json()).then((data) => data.products?.length && setProducts(data.products));
+    fetch("/api/categories").then((res) => res.json()).then((data) => data.categories?.length && setCategoryOptions(data.categories));
   }, []);
+
+  function categoryName(categoryId: string | null) {
+    return categoryOptions.find((category) => category.id === categoryId)?.name ?? "";
+  }
 
   async function uploadFiles(files: FileList | null) {
     if (!files?.length) return;
@@ -86,7 +92,9 @@ export default function AdminProductsPage() {
     });
     const result = await response.json();
     setProducts((current) => [
-      result.product ?? { ...payload, id: crypto.randomUUID(), image_url: imageUrls[0], images: imageUrls, category: categories.find((c) => c.id === payload.category_id)?.name ?? "" },
+      result.product
+        ? { ...result.product, category: result.product.category ?? categoryName(payload.category_id) }
+        : { ...payload, id: crypto.randomUUID(), image_url: imageUrls[0], images: imageUrls, category: categoryName(payload.category_id) },
       ...current
     ]);
     setImageUrls([]);
@@ -115,7 +123,7 @@ export default function AdminProductsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    setProducts((current) => current.map((item) => (item.id === editing.id ? { ...item, ...payload, image_url: imageUrls[0], images: imageUrls, specs } : item)));
+    setProducts((current) => current.map((item) => (item.id === editing.id ? { ...item, ...payload, image_url: imageUrls[0], images: imageUrls, specs, category: categoryName(payload.category_id) } : item)));
     setEditing(null);
     setImageUrls([]);
     setSpecs([]);
@@ -142,8 +150,8 @@ export default function AdminProductsPage() {
           <div className="mt-5 grid gap-4">
             <input required name="name" defaultValue={editing?.name} placeholder="Nom" className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink" />
             <textarea name="description" defaultValue={editing?.description} placeholder="Description" rows={3} className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink" />
-            <select name="category_id" defaultValue={editing?.category_id ?? categories[0].id} className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink">
-              {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
+            <select required name="category_id" defaultValue={editing?.category_id ?? categoryOptions[0]?.id ?? ""} className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink">
+              {categoryOptions.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
             </select>
             <input required name="stock" type="number" defaultValue={editing?.stock ?? 100} placeholder="Stock" className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink" />
             <label className="flex items-center gap-3 font-bold"><input name="is_active" defaultChecked={editing?.is_active ?? true} type="checkbox" /> Actif</label>
@@ -188,7 +196,7 @@ export default function AdminProductsPage() {
                 ))}
               </div>
             </div>
-            <button disabled={!imageUrls.length} className="flex items-center justify-center gap-2 rounded-lg bg-ink px-4 py-3 font-bold text-white disabled:bg-zinc-300"><Plus size={18} /> {editing ? "Enregistrer" : "Ajouter"}</button>
+            <button disabled={!imageUrls.length || !categoryOptions.length} className="flex items-center justify-center gap-2 rounded-lg bg-ink px-4 py-3 font-bold text-white disabled:bg-zinc-300"><Plus size={18} /> {editing ? "Enregistrer" : "Ajouter"}</button>
             {editing ? <button type="button" onClick={() => { setEditing(null); setImageUrls([]); setSpecs([]); }} className="rounded-lg border border-ink px-4 py-3 font-bold">Annuler</button> : null}
           </div>
         </form>
@@ -203,7 +211,7 @@ export default function AdminProductsPage() {
                 {products.map((product) => (
                   <tr key={product.id} className="border-t border-zinc-100">
                     <td className="p-3 font-black">{product.name}</td>
-                    <td className="p-3">{product.category ?? categories.find((c) => c.id === product.category_id)?.name}</td>
+                    <td className="p-3">{product.category ?? categoryName(product.category_id)}</td>
                     <td className="p-3">{product.stock}</td>
                     <td className="p-3">{formatPrice(Number(product.price))}</td>
                     <td className="p-3">{product.is_flash_sale ? "Oui" : "Non"}</td>

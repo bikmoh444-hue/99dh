@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Fragment } from "react";
 import { Star, Truck, Zap } from "lucide-react";
 import { Countdown } from "@/components/countdown";
 import { ProductCard } from "@/components/product-card";
@@ -14,7 +15,7 @@ function heroTitleHtml(title: string) {
     const parts = title.split("99 DH");
     return parts.map((part, i) =>
       i < parts.length - 1
-        ? <>{part}<span key={i} className="inline-flex translate-y-[-6px] rounded-full bg-gold px-4 py-2 text-3xl md:text-5xl">99 DH</span></>
+        ? <Fragment key={i}>{part}<span className="inline-flex translate-y-[-6px] rounded-full bg-gold px-4 py-2 text-3xl md:text-5xl">99 DH</span></Fragment>
         : part
     );
   }
@@ -81,12 +82,12 @@ export default async function HomePage() {
         <h2 className="text-3xl font-black">Explorer nos catégories</h2>
         <div className="mt-7 grid grid-cols-3 gap-4 md:grid-cols-7">
           {categories.map((category) => (
-            <a key={category.id} href="#deals" className="rounded-xl border border-zinc-200 bg-white p-4 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
+            <Link key={category.id} href={`/produits?category=${encodeURIComponent(category.id)}`} className="rounded-xl border border-zinc-200 bg-white p-4 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-soft">
               <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-gold">
                 <StoreIcon name={category.icon} className="h-6 w-6" />
               </div>
               <p className="mt-3 text-sm font-black">{category.name}</p>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
