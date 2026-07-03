@@ -3,6 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/components/cart-provider";
 import { WhatsappFloatButton } from "@/components/whatsapp-float-button";
 import { getSiteSettings } from "@/lib/data";
+import { getRequestLocale } from "@/lib/locale-server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -19,9 +20,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getRequestLocale();
   return (
-    <html lang="fr">
+    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <body>
         <CartProvider>{children}</CartProvider>
         <WhatsappFloatButton />

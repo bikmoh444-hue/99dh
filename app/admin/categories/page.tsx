@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import type { Category } from "@/lib/types";
+import { localizedValue, translatable } from "@/lib/i18n";
 
 const iconOptions = [
   "Smartphone", "Home", "Sparkles", "Shirt", "Utensils", "Zap", "Watch",
@@ -14,7 +15,8 @@ const iconOptions = [
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [editing, setEditing] = useState<Category | null>(null);
-  const [name, setName] = useState("");
+  const [nameAr, setNameAr] = useState("");
+  const [nameFr, setNameFr] = useState("");
   const [slug, setSlug] = useState("");
   const [icon, setIcon] = useState("ShoppingBag");
 
@@ -23,7 +25,8 @@ export default function AdminCategoriesPage() {
   }, []);
 
   function resetForm() {
-    setName("");
+    setNameAr("");
+    setNameFr("");
     setSlug("");
     setIcon("ShoppingBag");
     setEditing(null);
@@ -31,14 +34,15 @@ export default function AdminCategoriesPage() {
 
   function startEdit(cat: Category) {
     setEditing(cat);
-    setName(cat.name);
+    setNameAr(localizedValue(cat.name).ar);
+    setNameFr(localizedValue(cat.name).fr);
     setSlug(cat.slug);
     setIcon(cat.icon ?? "ShoppingBag");
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const payload = { name, slug, icon };
+    const payload = { name: translatable(nameAr, nameFr), slug, icon };
     if (editing) {
       await fetch(`/api/categories/${editing.id}`, {
         method: "PUT",
@@ -75,7 +79,8 @@ export default function AdminCategoriesPage() {
         <form onSubmit={submit} className="h-fit rounded-xl bg-white p-5 shadow-sm">
           <h2 className="text-xl font-black">{editing ? "Modifier la catégorie" : "Ajouter une catégorie"}</h2>
           <div className="mt-5 grid gap-4">
-            <input required value={name} onChange={(e) => setName(e.target.value)} placeholder="Nom" className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink" />
+            <input required dir="rtl" value={nameAr} onChange={(e) => setNameAr(e.target.value)} placeholder="اسم القسم بالعربية" className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink" />
+            <input required value={nameFr} onChange={(e) => setNameFr(e.target.value)} placeholder="Nom de categorie en francais" className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink" />
             <input required value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="Slug (ex: electronique)" className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink" />
             <select value={icon} onChange={(e) => setIcon(e.target.value)} className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink">
               {iconOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
@@ -94,7 +99,7 @@ export default function AdminCategoriesPage() {
               <tbody>
                 {categories.map((cat) => (
                   <tr key={cat.id} className="border-t border-zinc-100">
-                    <td className="p-3 font-black">{cat.name}</td>
+                    <td className="p-3 font-black">{localizedValue(cat.name).ar}</td>
                     <td className="p-3">{cat.slug}</td>
                     <td className="p-3">{cat.icon ?? "—"}</td>
                     <td className="p-3 text-right">
