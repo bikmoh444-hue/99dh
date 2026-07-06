@@ -9,7 +9,7 @@ export async function SiteFooter() {
     <footer className="bg-ink text-white">
       <div className="mx-auto grid max-w-7xl gap-6 px-3 py-8 text-sm sm:px-4 sm:py-12 sm:text-base md:grid-cols-3 lg:px-8">
         <div>
-          <h2 className="text-xl font-black sm:text-2xl">99 DH Store</h2>
+          <h2 className="text-xl font-black sm:text-2xl">199 DH Store</h2>
           <p className="mt-2 leading-6 text-zinc-300 sm:mt-3">
             La boutique marocaine a prix unique pour acheter vite, simplement et sans paiement en ligne.
           </p>
@@ -48,7 +48,7 @@ export async function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-white/10 px-3 py-4 text-center text-xs text-zinc-400 sm:py-5 sm:text-sm">
-        © 2026 99 DH Store. Tous droits reserves.
+        © 2026 199 DH Store. Tous droits reserves.
       </div>
     </footer>
   );

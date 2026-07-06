@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Dashboard - 99 DH Store"
+  title: "Dashboard - 199 DH Store"
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

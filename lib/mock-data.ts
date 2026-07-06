@@ -19,7 +19,7 @@ export const products: Product[] = [
     description: "Son clair, boîtier compact et autonomie longue durée.",
     category_id: "cat-electro",
     category: "Électronique",
-    price: 99,
+    price: 199,
     image_url: img("photo-1606220945770-b5b6c2c55bf1"),
     images: [img("photo-1606220945770-b5b6c2c55bf1")],
     specs: [{ label: "Autonomie", value: "Jusqu'à 6h" }],
@@ -36,7 +36,7 @@ export const products: Product[] = [
     description: "Rangement modulable pour épices, bocaux et accessoires.",
     category_id: "cat-cuisine",
     category: "Cuisine",
-    price: 99,
+    price: 199,
     image_url: img("photo-1556911220-bff31c812dba"),
     images: [img("photo-1556911220-bff31c812dba")],
     specs: [{ label: "Matière", value: "Plastique renforcé" }],
@@ -53,7 +53,7 @@ export const products: Product[] = [
     description: "Éclairage doux avec trois intensités pour bureau ou chevet.",
     category_id: "cat-maison",
     category: "Maison",
-    price: 99,
+    price: 199,
     image_url: img("photo-1507473885765-e6ed057f782c"),
     images: [img("photo-1507473885765-e6ed057f782c")],
     specs: [{ label: "Modes", value: "3 intensités" }],
@@ -70,7 +70,7 @@ export const products: Product[] = [
     description: "Routine compacte pour garder l'essentiel avec soi.",
     category_id: "cat-beaute",
     category: "Beauté",
-    price: 99,
+    price: 199,
     image_url: img("photo-1556228720-195a672e8a03"),
     images: [img("photo-1556228720-195a672e8a03")],
     specs: [{ label: "Format", value: "Voyage" }],
@@ -87,7 +87,7 @@ export const products: Product[] = [
     description: "Format léger avec compartiments sécurisés.",
     category_id: "cat-mode",
     category: "Mode",
-    price: 99,
+    price: 199,
     image_url: img("photo-1542291026-7eec264c27ff"),
     images: [img("photo-1542291026-7eec264c27ff")],
     specs: [{ label: "Usage", value: "Quotidien" }],
@@ -103,7 +103,7 @@ export const products: Product[] = [
     description: "Grip stable pour bureau, voiture ou cuisine.",
     category_id: "cat-gadgets",
     category: "Gadgets",
-    price: 99,
+    price: 199,
     image_url: img("photo-1516321318423-f06f85e504b3"),
     images: [img("photo-1516321318423-f06f85e504b3")],
     specs: [{ label: "Compatibilité", value: "Smartphones" }],
@@ -129,12 +129,12 @@ export const demoOrders: Order[] = [
     phone: "0612345678",
     city: "Casablanca",
     address: "Maarif, près Twin Center",
-    total_amount: 198,
+    total_amount: 398,
     status: "en_attente",
     created_at: new Date().toISOString(),
     order_items: [
-      { product_name: "Écouteurs Bluetooth Mini", quantity: 1, unit_price: 99, subtotal: 99 },
-      { product_name: "Lampe LED Tactile", quantity: 1, unit_price: 99, subtotal: 99 }
+      { product_name: "Écouteurs Bluetooth Mini", quantity: 1, unit_price: 199, subtotal: 199 },
+      { product_name: "Lampe LED Tactile", quantity: 1, unit_price: 199, subtotal: 199 }
     ]
   },
   {
@@ -144,9 +144,9 @@ export const demoOrders: Order[] = [
     phone: "0676543210",
     city: "Fès",
     address: "Route Imouzzer, résidence Atlas",
-    total_amount: 99,
+    total_amount: 199,
     status: "en_cours",
     created_at: new Date(Date.now() - 86400000).toISOString(),
-    order_items: [{ product_name: "Organisateur de Cuisine", quantity: 1, unit_price: 99, subtotal: 99 }]
+    order_items: [{ product_name: "Organisateur de Cuisine", quantity: 1, unit_price: 199, subtotal: 199 }]
   }
 ];

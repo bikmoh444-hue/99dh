@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
     <main className="grid min-h-screen place-items-center bg-mist px-4">
       <form onSubmit={submit} className="w-full max-w-md rounded-xl bg-white p-6 shadow-soft">
         <div className="grid h-12 w-12 place-items-center rounded-full bg-gold"><LockKeyhole /></div>
-        <h1 className="mt-5 text-3xl font-black">Admin 99 DH Store</h1>
+        <h1 className="mt-5 text-3xl font-black">Admin 199 DH Store</h1>
         <p className="mt-2 text-zinc-600">Connectez-vous avec un compte Supabase présent dans `admin_users`.</p>
         <div className="mt-6 grid gap-4">
           <input required type="email" name="email" placeholder="Email" className="rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-ink" />

@@ -9,8 +9,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
 
   return {
-    title: "99 DH Store",
-    description: "Boutique marocaine a prix unique de 99 DH avec paiement a la livraison.",
+    title: "199 DH Store",
+    description: "Boutique marocaine a prix unique de 199 DH avec paiement a la livraison.",
     icons: settings.logo_url
       ? {
           icon: [{ url: settings.logo_url }],

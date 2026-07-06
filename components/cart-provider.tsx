@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { CartLine, Product } from "@/lib/types";
+import { withFixedProductPrice } from "@/lib/pricing";
 
 type CartContextValue = {
   lines: CartLine[];
@@ -25,7 +26,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) setLines(JSON.parse(stored));
+    if (stored) {
+      const parsed = JSON.parse(stored) as CartLine[];
+      setLines(parsed.map((line) => ({ ...line, product: withFixedProductPrice(line.product) })));
+    }
   }, []);
 
   useEffect(() => {
@@ -49,14 +53,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       toast,
       setToast,
       addItem(product) {
+        const fixedProduct = withFixedProductPrice(product);
         setLines((current) => {
-          const existing = current.find((line) => line.product.id === product.id);
+          const existing = current.find((line) => line.product.id === fixedProduct.id);
           if (existing) {
-            return current.map((line) => (line.product.id === product.id ? { ...line, quantity: line.quantity + 1 } : line));
+            return current.map((line) => (line.product.id === fixedProduct.id ? { ...line, product: fixedProduct, quantity: line.quantity + 1 } : line));
           }
-          return [...current, { product, quantity: 1 }];
+          return [...current, { product: fixedProduct, quantity: 1 }];
         });
-        setToast(`${product.name} ajouté au panier`);
+        setToast(`${fixedProduct.name} ajouté au panier`);
       },
       decrement(productId) {
         setLines((current) =>

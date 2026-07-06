@@ -14,11 +14,12 @@ import { getRequestLocale } from "@/lib/locale-server";
 import { localized, ui } from "@/lib/i18n";
 
 function heroTitleHtml(title: string) {
-  if (title.includes("99 DH")) {
-    const parts = title.split("99 DH");
+  const highlightedPrice = title.match(/\b\d+\s*DH\b/)?.[0];
+  if (highlightedPrice) {
+    const parts = title.split(highlightedPrice);
     return parts.map((part, i) =>
       i < parts.length - 1
-        ? <Fragment key={i}>{part}<span className="inline-flex translate-y-[-3px] rounded-full bg-gold px-2.5 py-1.5 text-2xl sm:px-4 sm:py-2 sm:text-3xl md:translate-y-[-6px] md:text-5xl">99 DH</span></Fragment>
+        ? <Fragment key={i}>{part}<span className="inline-flex translate-y-[-3px] rounded-full bg-gold px-2.5 py-1.5 text-2xl sm:px-4 sm:py-2 sm:text-3xl md:translate-y-[-6px] md:text-5xl">{highlightedPrice}</span></Fragment>
         : part
     );
   }
@@ -61,7 +62,7 @@ export default async function HomePage() {
         </div>
         <div className="relative">
           <div className="relative aspect-[16/11] overflow-hidden rounded-xl bg-zinc-100 shadow-soft sm:aspect-[4/3]">
-            <Image src={settings.hero_image_url || products[0].image_url} alt="Produits 99 DH Store" fill priority sizes="(max-width: 768px) 100vw, 45vw" className="object-contain sm:object-cover" />
+            <Image src={settings.hero_image_url || products[0].image_url} alt="Produits 199 DH Store" fill priority sizes="(max-width: 768px) 100vw, 45vw" className="object-contain sm:object-cover" />
           </div>
           <div className="absolute bottom-3 left-3 rounded-xl bg-white/95 p-3 shadow-soft backdrop-blur sm:bottom-5 sm:left-5 sm:p-4">
             <div className="flex items-center gap-2.5 sm:gap-3">

@@ -1,6 +1,7 @@
 import { categories as fallbackCategories, products as fallbackProducts, testimonials as fallbackTestimonials } from "@/lib/mock-data";
 import { createServerSupabase } from "@/lib/supabase";
 import { defaultLocale, localized, translatable, type Locale } from "@/lib/i18n";
+import { FIXED_PRODUCT_PRICE, normalizeFixedPriceText } from "@/lib/pricing";
 import type { Category, FeatureItem, Product, ProductReview, SiteSettings, Testimonial } from "@/lib/types";
 
 const defaultFeatures = [
@@ -30,14 +31,14 @@ export const fallbackSiteSettings: SiteSettings = {
   whatsapp_message: "",
   show_testimonials: true,
   hero_badge_text: translatable("عروض حصرية", "Offres Exclusives"),
-  hero_title: translatable("كلشي بـ 99 درهم", "Tout à 99 DH"),
+  hero_title: translatable("كلشي بـ 199 درهم", "Tout à 199 DH"),
   hero_subtitle: translatable("أفضل المنتجات اليومية بثمن واحد فقط.", "Les meilleurs produits du quotidien à un seul prix."),
   hero_description: translatable("أفضل المنتجات اليومية بثمن واحد فقط.", "Les meilleurs produits du quotidien à un seul prix."),
   hero_image_url: "",
   hero_cta_primary_text: translatable("تسوق الآن", "Acheter maintenant"),
-  hero_cta_primary_link: "#deals",
+  hero_cta_primary_link: "#categories",
   hero_cta_secondary_text: translatable("اكتشف العروض", "Voir les offres"),
-  hero_cta_secondary_link: "#categories",
+  hero_cta_secondary_link: "#deals",
   logo_url: "",
   features: defaultFeatures
 };
@@ -47,12 +48,23 @@ function normalizeProduct(item: any, locale: Locale = defaultLocale): Product {
   const images = item.images?.length ? item.images : galleryRows;
   return {
     ...item,
+    price: FIXED_PRODUCT_PRICE,
     name: localized(item.name, locale),
     description: localized(item.description, locale),
     image_url: images[0] ?? item.image_url ?? fallbackProducts[0].image_url,
     images: images.length ? images : [item.image_url ?? fallbackProducts[0].image_url],
     specs: Array.isArray(item.specs) ? item.specs : [],
     category: localized(item.categories?.name ?? item.category ?? "Produit", locale)
+  };
+}
+
+function normalizeSiteSettings(settings: SiteSettings): SiteSettings {
+  return {
+    ...settings,
+    hero_title: normalizeFixedPriceText(settings.hero_title),
+    hero_cta_primary_link: "#categories",
+    hero_cta_secondary_text: normalizeFixedPriceText(settings.hero_cta_secondary_text),
+    hero_cta_secondary_link: "#deals"
   };
 }
 
@@ -71,15 +83,15 @@ function normalizeTestimonial(item: any): Testimonial {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const supabase = createServerSupabase();
-  if (!supabase) return fallbackSiteSettings;
+  if (!supabase) return normalizeSiteSettings(fallbackSiteSettings);
   const { data } = await supabase.from("site_settings").select("*").eq("id", 1).maybeSingle();
-  if (!data) return fallbackSiteSettings;
-  return {
+  if (!data) return normalizeSiteSettings(fallbackSiteSettings);
+  return normalizeSiteSettings({
     ...fallbackSiteSettings,
     ...data,
     shipping_fee: Number(data.shipping_fee ?? 0),
     features: Array.isArray(data.features) ? data.features as FeatureItem[] : defaultFeatures
-  };
+  });
 }
 
 function localizeCategory(item: Category, locale: Locale): Category {
@@ -162,7 +174,7 @@ export async function getProductData(id: string, locale: Locale = defaultLocale)
       similar: fallbackProducts.filter((item) => item.category_id === product?.category_id && item.id !== id).slice(0, 4).map((item) => normalizeProduct(item, locale)),
       reviews: [
         { id: "r1", product_id: id, customer_name: "Sara", rating: 5, comment: "Produit conforme et livraison rapide.", created_at: new Date().toISOString() },
-        { id: "r2", product_id: id, customer_name: "Yassine", rating: 4, comment: "Bon rapport qualité prix pour 99 DH.", created_at: new Date().toISOString() }
+        { id: "r2", product_id: id, customer_name: "Yassine", rating: 4, comment: "Bon rapport qualité prix pour 199 DH.", created_at: new Date().toISOString() }
       ]
     };
   }

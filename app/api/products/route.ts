@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminSupabase } from "@/lib/supabase";
+import { FIXED_PRODUCT_PRICE, withFixedProductPrice } from "@/lib/pricing";
 
 export async function GET() {
   const supabase = createAdminSupabase();
@@ -9,7 +10,7 @@ export async function GET() {
   return NextResponse.json({
     products: data?.map((item: any) => {
       const images = [...(item.product_images ?? [])].sort((a: any, b: any) => a.position - b.position).map((image: any) => image.image_url);
-      return { ...item, image_url: images[0] ?? item.image_url, images, category: item.categories?.name };
+      return withFixedProductPrice({ ...item, image_url: images[0] ?? item.image_url, images, category: item.categories?.name });
     }) ?? []
   });
 }
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
   if (!supabase) return NextResponse.json({ product: { ...body, id: crypto.randomUUID() } });
 
   const { image_urls, ...productPayload } = body;
+  productPayload.price = FIXED_PRODUCT_PRICE;
   productPayload.images = image_urls ?? [];
   productPayload.specs = body.specs ?? [];
   const { data, error } = await supabase.from("products").insert(productPayload).select("*").single();

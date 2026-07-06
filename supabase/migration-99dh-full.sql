@@ -21,7 +21,7 @@ create table if not exists public.products (
   name text not null,
   description text,
   category_id uuid references public.categories(id) on delete set null,
-  price numeric(10,2) not null default 99.00,
+  price numeric(10,2) not null default 199.00,
   images text[] default '{}',
   specs jsonb default '[]',
   rating numeric(2,1) default 0,
@@ -41,6 +41,8 @@ alter table public.products add column if not exists stock integer default 100;
 alter table public.products add column if not exists is_flash_sale boolean default false;
 alter table public.products add column if not exists flash_sale_end timestamptz;
 alter table public.products add column if not exists is_active boolean default true;
+alter table public.products alter column price set default 199.00;
+update public.products set price = 199.00 where price = 99.00;
 
 -- Product images, ordered gallery
 create table if not exists public.product_images (
@@ -93,10 +95,11 @@ create table if not exists public.order_items (
   product_id uuid references public.products(id) on delete set null,
   product_name text not null,
   quantity integer not null default 1 check (quantity > 0),
-  unit_price numeric(10,2) not null default 99.00,
+  unit_price numeric(10,2) not null default 199.00,
   subtotal numeric(10,2) not null,
   created_at timestamptz default now()
 );
+alter table public.order_items alter column unit_price set default 199.00;
 
 -- Product reviews
 create table if not exists public.product_reviews (
@@ -172,29 +175,42 @@ create table if not exists public.site_settings (
   shipping_fee numeric not null default 35,
   whatsapp_number text default '',
   phone_number text default '',
-  contact_email text default 'contact@99dh.store',
+  contact_email text default 'contact@199dh.store',
   instagram_url text default '',
   facebook_url text default '',
-  whatsapp_message text default 'Bonjour, j''ai une question sur un produit 99 DH Store.',
+  whatsapp_message text default 'Bonjour, j''ai une question sur un produit 199 DH Store.',
   show_testimonials boolean not null default true,
   constraint single_row check (id = 1)
 );
 
 -- Hero & Features columns for site_settings
 alter table public.site_settings add column if not exists hero_badge_text text default 'Exclusivité Maroc';
-alter table public.site_settings add column if not exists hero_title text default 'Tout à 99 DH';
+alter table public.site_settings add column if not exists hero_title text default 'Tout à 199 DH';
 alter table public.site_settings add column if not exists hero_subtitle text default '';
 alter table public.site_settings add column if not exists hero_description text default 'Des produits utiles, tendance et sélectionnés pour le quotidien marocain. Prix unique, livraison rapide, paiement à la livraison.';
 alter table public.site_settings add column if not exists hero_image_url text default '';
 alter table public.site_settings add column if not exists hero_cta_primary_text text default 'Acheter maintenant';
-alter table public.site_settings add column if not exists hero_cta_primary_link text default '#deals';
-alter table public.site_settings add column if not exists hero_cta_secondary_text text default 'Voir le catalogue';
-alter table public.site_settings add column if not exists hero_cta_secondary_link text default '#categories';
+alter table public.site_settings add column if not exists hero_cta_primary_link text default '#categories';
+alter table public.site_settings add column if not exists hero_cta_secondary_text text default 'Voir les offres';
+alter table public.site_settings add column if not exists hero_cta_secondary_link text default '#deals';
 alter table public.site_settings add column if not exists logo_url text default '';
 alter table public.site_settings add column if not exists features jsonb default '[{"icon":"Truck","title":"Livraison rapide","subtitle":"24/48h partout"},{"icon":"CreditCard","title":"Paiement à la livraison","subtitle":"Sécurité totale"},{"icon":"PackageCheck","title":"Produits sélectionnés","subtitle":"Qualité premium"},{"icon":"LockKeyhole","title":"Achat sécurisé","subtitle":"Données protégées"}]';
 
 insert into public.site_settings (id) values (1)
 on conflict (id) do nothing;
+
+update public.site_settings
+set
+  contact_email = case when contact_email = 'contact@99dh.store' then 'contact@199dh.store' else contact_email end,
+  whatsapp_message = replace(whatsapp_message, '99 DH Store', '199 DH Store'),
+  hero_title = replace(replace(hero_title, '99 DH', '199 DH'), '99 درهم', '199 درهم'),
+  hero_cta_primary_link = '#categories',
+  hero_cta_secondary_text = case
+    when hero_cta_secondary_text = 'Voir le catalogue' then 'Voir les offres'
+    else replace(replace(hero_cta_secondary_text, '99 DH', '199 DH'), '99 درهم', '199 درهم')
+  end,
+  hero_cta_secondary_link = '#deals'
+where id = 1;
 
 -- updated_at trigger
 create or replace function public.update_updated_at_column()

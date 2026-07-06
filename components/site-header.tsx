@@ -35,8 +35,8 @@ export function SiteHeader({ locale = "ar" }: { locale?: Locale }) {
                 <Image src={logoUrl} alt="Logo" width={48} height={48} className="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12" />
               ) : (
                 <span className="whitespace-nowrap text-lg font-black tracking-tight sm:text-xl">
-                  <span className="hidden sm:inline">99 DH Store</span>
-                  <span className="sm:hidden">99+</span>
+                  <span className="hidden sm:inline">199 DH Store</span>
+                  <span className="sm:hidden">199+</span>
                 </span>
               )}
             </Link>

@@ -9,6 +9,7 @@ import type { Category, Product } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import { createBrowserSupabase } from "@/lib/supabase";
 import { localizedValue, translatable } from "@/lib/i18n";
+import { FIXED_PRODUCT_PRICE, FIXED_PRODUCT_PRICE_LABEL } from "@/lib/pricing";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>(demoProducts);
@@ -92,7 +93,7 @@ export default function AdminProductsPage() {
       stock: Number(form.get("stock")),
       is_flash_sale: form.get("is_flash_sale") === "on",
       flash_sale_end: form.get("flash_sale_end") ? String(form.get("flash_sale_end")) : null,
-      price: 99,
+      price: FIXED_PRODUCT_PRICE,
       rating: 4.8,
       reviews_count: 0,
       is_active: form.get("is_active") === "on",
@@ -214,7 +215,7 @@ export default function AdminProductsPage() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
                   <p className="text-xs font-bold text-zinc-500">Prix fixe</p>
-                  <p className="text-lg font-black text-ink">99 DH</p>
+                  <p className="text-lg font-black text-ink">{FIXED_PRODUCT_PRICE_LABEL}</p>
                 </div>
                 <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2">
                   <p className="text-xs font-bold text-zinc-500">Rating defaut</p>

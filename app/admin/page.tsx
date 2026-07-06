@@ -109,7 +109,7 @@ export default function AdminDashboardPage() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
           <div>
             <h1 className="text-2xl font-black">Dashboard Admin</h1>
-            <p className="text-sm text-zinc-500">Commandes, produits et ventes 99 DH Store</p>
+            <p className="text-sm text-zinc-500">Commandes, produits et ventes 199 DH Store</p>
           </div>
           <div className="flex items-center gap-3">
             {newOrderAlert ? <span className="rounded-full bg-gold px-3 py-2 text-sm font-black text-ink"><Bell size={15} className="inline" /> Nouvelle commande</span> : null}

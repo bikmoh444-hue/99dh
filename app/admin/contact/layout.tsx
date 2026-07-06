@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Contact - 99 DH Store"
+  title: "Contact - 199 DH Store"
 };
 
 export default function AdminContactLayout({ children }: { children: React.ReactNode }) {
